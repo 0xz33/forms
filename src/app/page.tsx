@@ -1,95 +1,82 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import React, { useRef, useState } from 'react'
+import { Canvas, useFrame, extend, Object3DNode } from '@react-three/fiber'
+import * as THREE from 'three'
+import vertexShader from './vertexShader'
+
+class CustomShaderMaterial extends THREE.ShaderMaterial {
+  constructor() {
+    super({
+      uniforms: {
+        time: { value: 0 },
+        MouseDentro: { value: false }
+      },
+      vertexShader,
+      fragmentShader: `
+        void main() {
+          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+      `,
+      wireframe: true
+    })
+  }
+}
+
+extend({ CustomShaderMaterial })
+
+// Add this type declaration to fix the TypeScript error
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      customShaderMaterial: Object3DNode<CustomShaderMaterial, typeof CustomShaderMaterial>
+    }
+  }
+}
+
+function Sphere() {
+  const meshRef = useRef<THREE.Mesh>(null!)
+  const materialRef = useRef<CustomShaderMaterial>(null!)
+  const wireframeRef = useRef<THREE.LineSegments>(null!)
+  const [mouseDentro, setMouseDentro] = useState(false)
+
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = state.clock.getElapsedTime()
+      materialRef.current.uniforms.MouseDentro.value = mouseDentro
+    }
+    meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01
+    if (wireframeRef.current) {
+      wireframeRef.current.rotation.x = wireframeRef.current.rotation.y += 0.01
+    }
+  })
+
+  // Reduced segment count for fewer triangles
+  const sphereSegments = 16 // Reduced from 64
+
+  return (
+    <group
+      onPointerEnter={() => setMouseDentro(true)}
+      onPointerLeave={() => setMouseDentro(false)}
+    >
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[1, sphereSegments, sphereSegments]} />
+        <customShaderMaterial ref={materialRef} />
+      </mesh>
+      <lineSegments ref={wireframeRef}>
+        <wireframeGeometry args={[new THREE.SphereGeometry(1, sphereSegments, sphereSegments)]} />
+        <lineBasicMaterial color="black" />
+      </lineSegments>
+    </group>
+  )
+}
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <Canvas camera={{ position: [0, 0, 3] }}>
+        <Sphere />
+      </Canvas>
+    </div>
+  )
 }
