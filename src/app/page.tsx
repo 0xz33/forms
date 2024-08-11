@@ -15,7 +15,7 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
       vertexShader,
       fragmentShader: `
         void main() {
-          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+          gl_FragColor = vec4(0.62, 0.59, 0.78, 1.0);
         }
       `,
       wireframe: true
@@ -25,7 +25,6 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
 
 extend({ CustomShaderMaterial })
 
-// Add this type declaration to fix the TypeScript error
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -34,7 +33,12 @@ declare global {
   }
 }
 
-function Sphere() {
+interface SphereProps {
+  sphereSegments: number;
+  position: [number, number, number];
+}
+
+function Sphere({ sphereSegments, position }: SphereProps) {
   const meshRef = useRef<THREE.Mesh>(null!)
   const materialRef = useRef<CustomShaderMaterial>(null!)
   const wireframeRef = useRef<THREE.LineSegments>(null!)
@@ -51,11 +55,9 @@ function Sphere() {
     }
   })
 
-  // Reduced segment count for fewer triangles
-  const sphereSegments = 3 // Reduced from 64
-
   return (
     <group
+      position={position}
       onPointerEnter={() => setMouseDentro(true)}
       onPointerLeave={() => setMouseDentro(false)}
     >
@@ -74,8 +76,12 @@ function Sphere() {
 export default function Home() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Canvas camera={{ position: [0, 0, 3] }}>
-        <Sphere />
+      <Canvas camera={{ position: [0, 0, 5] }}>
+        <Sphere sphereSegments={2} position={[-5, 0, 0]} />
+        <Sphere sphereSegments={3} position={[0 - 2.5, 0, 0]} />
+        <Sphere sphereSegments={4} position={[0, 0, 0]} />
+        <Sphere sphereSegments={5} position={[2.5, 0, 0]} />
+        <Sphere sphereSegments={33} position={[5, 0, 0]} />
       </Canvas>
     </div>
   )
