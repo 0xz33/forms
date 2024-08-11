@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react'
 import { Canvas, useFrame, extend, Object3DNode } from '@react-three/fiber'
 import * as THREE from 'three'
-import vertexShader from './vertexShader'
+import vertexShader from './form0'
 
 class CustomShaderMaterial extends THREE.ShaderMaterial {
   constructor() {
@@ -52,7 +52,7 @@ function Sphere() {
   })
 
   // Reduced segment count for fewer triangles
-  const sphereSegments = 16 // Reduced from 64
+  const sphereSegments = 3 // Reduced from 64
 
   return (
     <group
