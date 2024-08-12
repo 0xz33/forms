@@ -10,7 +10,8 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
     super({
       uniforms: {
         time: { value: 0 },
-        MouseDentro: { value: false }
+        MouseDentro: { value: false },
+        seed: { value: 0 } // New uniform for the seed
       },
       vertexShader,
       fragmentShader: `
@@ -36,9 +37,10 @@ declare global {
 interface SphereProps {
   sphereSegments: number;
   position: [number, number, number];
+  seed: number; // New prop for the seed
 }
 
-function Sphere({ sphereSegments, position }: SphereProps) {
+function Sphere({ sphereSegments, position, seed }: SphereProps) {
   const meshRef = useRef<THREE.Mesh>(null!)
   const materialRef = useRef<CustomShaderMaterial>(null!)
   const [mouseDentro, setMouseDentro] = useState(false)
@@ -47,6 +49,7 @@ function Sphere({ sphereSegments, position }: SphereProps) {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime()
       materialRef.current.uniforms.MouseDentro.value = mouseDentro
+      materialRef.current.uniforms.seed.value = seed // Set the seed uniform
     }
     meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01
   })
@@ -66,14 +69,25 @@ function Sphere({ sphereSegments, position }: SphereProps) {
 }
 
 export default function Home() {
+  const spheres = [
+    { segments: 2, position: [-5, 0, 0] },
+    { segments: 3, position: [-2.5, 0, 0] },
+    { segments: 8, position: [0, 0, 0] },
+    { segments: 22, position: [2.5, 0, 0] },
+    { segments: 111, position: [5, 0, 0] }
+  ]
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
       <Canvas camera={{ position: [0, 0, 5] }}>
-        <Sphere sphereSegments={2} position={[-5, 0, 0]} />
-        <Sphere sphereSegments={3} position={[-2.5, 0, 0]} />
-        <Sphere sphereSegments={4} position={[0, 0, 0]} />
-        <Sphere sphereSegments={5} position={[2.5, 0, 0]} />
-        <Sphere sphereSegments={6} position={[5, 0, 0]} />
+        {spheres.map((sphere, index) => (
+          <Sphere
+            key={index}
+            sphereSegments={sphere.segments}
+            position={sphere.position as [number, number, number]}
+            seed={Math.random() * 100} // Generate a random seed for each sphere
+          />
+        ))}
       </Canvas>
     </div>
   )

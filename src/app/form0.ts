@@ -3,6 +3,7 @@ export default `
 
     uniform float time;
     uniform bool MouseDentro;
+    uniform float seed;
 
     vec3 mod289(vec3 x) {
         return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -94,7 +95,9 @@ export default `
     }
 
     void main() {
-        float displacement = 0.75 * cnoise(0.43 * position + time);
+        // Use the seed to offset the position
+        vec3 seedOffset = vec3(seed, seed * 1.5, seed * 2.0);
+        float displacement = 0.7 * cnoise(0.5 * (position + seedOffset) + time);
         vec3 newPosition = position + normal * displacement;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
     }
