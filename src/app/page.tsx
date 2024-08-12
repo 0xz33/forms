@@ -69,23 +69,29 @@ function Sphere({ sphereSegments, position, seed }: SphereProps) {
 }
 
 export default function Home() {
-  const spheres = [
-    { segments: 2, position: [-5, 0, 0] },
-    { segments: 3, position: [-2.5, 0, 0] },
-    { segments: 8, position: [0, 0, 0] },
-    { segments: 22, position: [2.5, 0, 0] },
-    { segments: 111, position: [5, 0, 0] }
-  ]
+  const gridSize = 4
+  const totalSpheres = gridSize * gridSize
+  const spheres = Array.from({ length: totalSpheres }, (_, index) => ({
+    segments: index + 2, // Start from 2 segments, increase by 1 for each sphere
+    position: [
+      (index % gridSize - (gridSize - 1) / 2) * 2.5,
+      ((gridSize - 1) / 2 - Math.floor(index / gridSize)) * 2.5,
+      0
+    ]
+  }))
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
-      <Canvas camera={{ position: [0, 0, 5] }}>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <Canvas
+        camera={{ position: [0, 0, 15], fov: 50 }}
+        style={{ width: '100%', height: '100%' }}
+      >
         {spheres.map((sphere, index) => (
           <Sphere
             key={index}
             sphereSegments={sphere.segments}
             position={sphere.position as [number, number, number]}
-            seed={Math.random() * 100} // Generate a random seed for each sphere
+            seed={Math.random() * 100}
           />
         ))}
       </Canvas>
