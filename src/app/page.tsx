@@ -12,12 +12,12 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
       uniforms: {
         time: { value: 0 },
         MouseDentro: { value: false },
-        seed: { value: 0 } // New uniform for the seed
+        seed: { value: 0 }
       },
       vertexShader,
       fragmentShader: `
         void main() {
-          gl_FragColor = vec4(0.62, 0.59, 0.78, 1.0); // Black color for wireframe
+          gl_FragColor = vec4(0.62, 0.59, 0.78, 1.0);
         }
       `,
       wireframe: true
@@ -37,11 +37,10 @@ declare global {
 
 interface SphereProps {
   sphereSegments: number;
-  position: [number, number, number];
-  seed: number; // New prop for the seed
+  seed: number;
 }
 
-function Sphere({ sphereSegments, position, seed }: SphereProps) {
+function Sphere({ sphereSegments, seed }: SphereProps) {
   const meshRef = useRef<THREE.Mesh>(null!)
   const materialRef = useRef<CustomShaderMaterial>(null!)
   const [mouseDentro, setMouseDentro] = useState(false)
@@ -50,14 +49,13 @@ function Sphere({ sphereSegments, position, seed }: SphereProps) {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = state.clock.getElapsedTime()
       materialRef.current.uniforms.MouseDentro.value = mouseDentro
-      materialRef.current.uniforms.seed.value = seed // Set the seed uniform
+      materialRef.current.uniforms.seed.value = seed
     }
     meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01
   })
 
   return (
     <group
-      position={position}
       onPointerEnter={() => setMouseDentro(true)}
       onPointerLeave={() => setMouseDentro(false)}
     >
@@ -70,33 +68,16 @@ function Sphere({ sphereSegments, position, seed }: SphereProps) {
 }
 
 export default function Home() {
-  const gridSize = 4
-  const spacing = 3.5 // Increased from 2.5 to 3.5 for more padding
-
-  const totalSpheres = gridSize * gridSize
-  const spheres = Array.from({ length: totalSpheres }, (_, index) => ({
-    segments: index + 2,
-    position: [
-      (index % gridSize - (gridSize - 1) / 2) * spacing,
-      ((gridSize - 1) / 2 - Math.floor(index / gridSize)) * spacing,
-      0
-    ]
-  }))
-
   return (
     <div className={styles.container}>
       <Canvas
-        camera={{ position: [0, 0, 15], fov: 50 }}
+        camera={{ position: [0, 0, 3], fov: 50 }}
         style={{ width: '100%', height: '100%' }}
       >
-        {spheres.map((sphere, index) => (
-          <Sphere
-            key={index}
-            sphereSegments={sphere.segments}
-            position={sphere.position as [number, number, number]}
-            seed={Math.random() * 100}
-          />
-        ))}
+        <Sphere
+          sphereSegments={32}
+          seed={Math.random() * 100}
+        />
       </Canvas>
     </div>
   )
