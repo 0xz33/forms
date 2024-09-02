@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, extend, Object3DNode } from '@react-three/fiber'
 import * as THREE from 'three'
-import vertexShader from '../app/form0'
+import vertexShader from '../app/shaders/form0'
 import { PerspectiveCamera } from '@react-three/drei'
 
 class CustomShaderMaterial extends THREE.ShaderMaterial {
