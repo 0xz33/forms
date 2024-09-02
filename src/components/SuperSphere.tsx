@@ -123,11 +123,11 @@ const fragmentShader = `
 
   void main() {
     // Ambient light component
-    float ambientStrength = .99;
+    float ambientStrength = 0.999;
     vec3 ambient = ambientStrength * color;
 
     // Diffuse light component
-    vec3 lightDir = normalize(vec3(0.0, 0.0, 0.0));  // Light from directly in front
+    vec3 lightDir = normalize(vec3(0.0, 0.0, 0.0));
     float diff = max(dot(vNormal, lightDir), 0.0);
     vec3 diffuse = diff * color;
 
@@ -154,7 +154,8 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
             },
             vertexShader,
             fragmentShader,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            wireframe: false
         })
     }
 }
@@ -202,7 +203,7 @@ function Sphere({ sphereSegments, seed, speed, color, noiseFrequency, noiseAmpli
             materialRef.current.uniforms.time.value = state.clock.getElapsedTime() * speed
             materialRef.current.uniforms.MouseDentro.value = mouseDentro
             materialRef.current.uniforms.seed.value = seed
-            materialRef.current.uniforms.color.value = color
+            materialRef.current.uniforms.color.value = new THREE.Color(color)
             materialRef.current.uniforms.noiseFrequency.value = noiseFrequency
             materialRef.current.uniforms.noiseAmplitude.value = noiseAmplitude
         }
@@ -213,6 +214,8 @@ function Sphere({ sphereSegments, seed, speed, color, noiseFrequency, noiseAmpli
 
     useEffect(() => {
         if (meshRef.current) {
+            meshRef.current.geometry.dispose();
+            meshRef.current.geometry = new THREE.IcosahedronGeometry(1, sphereSegments);
             addBarycentricCoordinates(meshRef.current.geometry);
         }
     }, [sphereSegments]);

@@ -1,48 +1,19 @@
-import React from 'react'
+'use client'
+import React, { useContext } from 'react'
 import SuperSphere from '../components/SuperSphere'
 import styles from './page.module.css'
+import { ConfigContext } from './layout'
 
 export default function Home() {
-
-  // color for SuperSphere: primary-400: #B2ACD2
+  const { config } = useContext(ConfigContext);
 
   return (
-    <div className={styles.container}>
-      {/* full */}
+    <div className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <SuperSphere
-        width="100%"
-        height="100vh"
-        vertices={11}
-        speed={1}
-        color="#B2ACD2"
-        noiseFrequency={.88}
-        noiseAmplitude={.8}
-        rotationSpeed={1} // Added rotation speed
+        width="320px"
+        height="320px"
+        {...config}
       />
-
-      {/* medium */}
-      {/* <SuperSphere 
-        width="320px" 
-        height="320px" 
-        vertices={18} 
-        speed={0.88} 
-        color="#B2ACD2" 
-        noiseFrequency={2} 
-        noiseAmplitude={0.3}
-        rotationSpeed={1} 
-      /> */}
-
-      {/* small */}
-      {/* <SuperSphere 
-        width="88px" 
-        height="88px" 
-        vertices={8} 
-        speed={0.55} 
-        color="#B2ACD2" 
-        noiseFrequency={3} 
-        noiseAmplitude={0.2}
-        rotationSpeed={1.5}
-      /> */}
     </div>
   )
 }
