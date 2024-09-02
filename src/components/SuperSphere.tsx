@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, extend, Object3DNode } from '@react-three/fiber'
 import * as THREE from 'three'
 import vertexShader from '../app/form0'
+import { PerspectiveCamera } from '@react-three/drei'
 
 class CustomShaderMaterial extends THREE.ShaderMaterial {
     constructor() {
@@ -71,9 +72,16 @@ interface SuperSphereProps {
     height?: string | number;
     className?: string;
     style?: React.CSSProperties;
+    vertices?: number; // New prop for number of vertices
 }
 
-export default function SuperSphere({ width = '100%', height = '100%', className, style }: SuperSphereProps) {
+export default function SuperSphere({
+    width = '100%',
+    height = '100%',
+    className,
+    style,
+    vertices = 32 // Default value if not provided
+}: SuperSphereProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState({ width: 0, height: 0 })
 
@@ -95,12 +103,15 @@ export default function SuperSphere({ width = '100%', height = '100%', className
 
     return (
         <div ref={containerRef} style={{ width, height, ...style }} className={className}>
-            <Canvas
-                camera={{ position: [0, 0, 10], fov: 50 }}
-                style={{ width: '100%', height: '100%' }}
-            >
+            <Canvas style={{ width: '100%', height: '100%' }}>
+                <PerspectiveCamera
+                    makeDefault
+                    position={[0, 0, 5]}
+                    fov={50}
+                    aspect={size.width / size.height}
+                />
                 <Sphere
-                    sphereSegments={32}
+                    sphereSegments={vertices}
                     seed={Math.random() * 100}
                 />
             </Canvas>

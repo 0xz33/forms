@@ -5,7 +5,7 @@ import styles from './page.module.css'
 export default function Home() {
   return (
     <div className={styles.container}>
-      <SuperSphere width="100%" height="100vh" />
+      <SuperSphere width="100%" height="100vh" vertices={24} />
     </div>
   )
 }
