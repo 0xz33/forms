@@ -9,19 +9,40 @@ export default function Home() {
   return (
     <div className={styles.container}>
       {/* full */}
-      <SuperSphere width="100%" height="100vh" vertices={32} speed={.22} color="#B2ACD2" />
+      <SuperSphere
+        width="100%"
+        height="100vh"
+        vertices={64}
+        speed={1}
+        color="#B2ACD2"
+        noiseFrequency={.88}
+        noiseAmplitude={.8}
+        rotationSpeed={1} // Added rotation speed
+      />
 
       {/* medium */}
-      {/* <SuperSphere width="320px" height="320px" vertices={18} speed={.88} color="#B2ACD2" /> */}
+      {/* <SuperSphere 
+        width="320px" 
+        height="320px" 
+        vertices={18} 
+        speed={0.88} 
+        color="#B2ACD2" 
+        noiseFrequency={2} 
+        noiseAmplitude={0.3}
+        rotationSpeed={1} 
+      /> */}
 
       {/* small */}
-      {/* <SuperSphere width="88px" height="88px" vertices={8} speed={.55} color="#B2ACD2" /> */}
-
-      {/* x small */}
-      {/* <SuperSphere width="56px" height="56px" vertices={6} speed={1.11} color="#B2ACD2" /> */}
-
-      {/* 2x small */}
-      {/* <SuperSphere width="24px" height="24px" vertices={4} speed={.88} color="#B2ACD2" /> */}
+      {/* <SuperSphere 
+        width="88px" 
+        height="88px" 
+        vertices={8} 
+        speed={0.55} 
+        color="#B2ACD2" 
+        noiseFrequency={3} 
+        noiseAmplitude={0.2}
+        rotationSpeed={1.5}
+      /> */}
     </div>
   )
-} 
+}

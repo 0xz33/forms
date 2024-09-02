@@ -9,6 +9,8 @@ const vertexShader = `
 uniform float time;
 uniform float seed;
 uniform bool MouseDentro;
+uniform float noiseFrequency;
+uniform float noiseAmplitude;
 
 varying vec2 vUv;
 
@@ -90,10 +92,8 @@ void main() {
     vUv = uv;
     
     vec3 pos = position;
-    float noiseFreq = 1.5;
-    float noiseAmp = 0.25;
-    vec3 noisePos = vec3(pos.x * noiseFreq + time, pos.y, pos.z);
-    pos += normal * cnoise(noisePos) * noiseAmp;
+    vec3 noisePos = vec3(pos.x * noiseFrequency + time, pos.y * noiseFrequency, pos.z * noiseFrequency);
+    pos += normal * cnoise(noisePos) * noiseAmplitude;
     
     if (MouseDentro) {
         pos += normal * (sin(time * 0.5) + 1.0) * 0.1;
@@ -110,7 +110,9 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
                 time: { value: 0 },
                 MouseDentro: { value: false },
                 seed: { value: 0 },
-                color: { value: color }
+                color: { value: color },
+                noiseFrequency: { value: 1.5 },
+                noiseAmplitude: { value: 0.25 }
             },
             vertexShader,
             fragmentShader: `
@@ -139,9 +141,12 @@ interface SphereProps {
     seed: number;
     speed: number;
     color: THREE.Color;
+    noiseFrequency: number;
+    noiseAmplitude: number;
+    rotationSpeed: number;
 }
 
-function Sphere({ sphereSegments, seed, speed, color }: SphereProps) {
+function Sphere({ sphereSegments, seed, speed, color, noiseFrequency, noiseAmplitude, rotationSpeed }: SphereProps) {
     const meshRef = useRef<THREE.Mesh>(null!)
     const materialRef = useRef<CustomShaderMaterial>(null!)
     const [mouseDentro, setMouseDentro] = useState(false)
@@ -152,8 +157,12 @@ function Sphere({ sphereSegments, seed, speed, color }: SphereProps) {
             materialRef.current.uniforms.MouseDentro.value = mouseDentro
             materialRef.current.uniforms.seed.value = seed
             materialRef.current.uniforms.color.value = color
+            materialRef.current.uniforms.noiseFrequency.value = noiseFrequency
+            materialRef.current.uniforms.noiseAmplitude.value = noiseAmplitude
         }
-        meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01 * speed
+        // Apply rotation
+        meshRef.current.rotation.x += rotationSpeed * 0.01
+        meshRef.current.rotation.y += rotationSpeed * 0.01
     })
 
     return (
@@ -176,7 +185,10 @@ interface SuperSphereProps {
     style?: React.CSSProperties;
     vertices?: number;
     speed?: number;
-    color?: string; // New prop for color
+    color?: string;
+    noiseFrequency?: number;
+    noiseAmplitude?: number;
+    rotationSpeed?: number;
 }
 
 export default function SuperSphere({
@@ -186,7 +198,10 @@ export default function SuperSphere({
     style,
     vertices = 32,
     speed = 1,
-    color = '#9E96C6' // Default color if not provided
+    color = '#B2ACD2',
+    noiseFrequency = 1.5,
+    noiseAmplitude = 0.25,
+    rotationSpeed = 1
 }: SuperSphereProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState({ width: 0, height: 0 })
@@ -223,6 +238,9 @@ export default function SuperSphere({
                     seed={Math.random() * 100}
                     speed={speed}
                     color={threeColor}
+                    noiseFrequency={noiseFrequency}
+                    noiseAmplitude={noiseAmplitude}
+                    rotationSpeed={rotationSpeed}
                 />
             </Canvas>
         </div>
