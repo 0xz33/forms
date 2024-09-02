@@ -1,25 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { ConfigContext } from '../app/layout';
+import { ConfigContext } from '../contexts/ConfigContext';
 
-interface ControlPanelProps {
-    vertices: number;
-    setVertices: (value: number) => void;
-    speed: number;
-    setSpeed: (value: number) => void;
-    color: string;
-    setColor: (value: string) => void;
-    noiseFrequency: number;
-    setNoiseFrequency: (value: number) => void;
-    noiseAmplitude: number;
-    setNoiseAmplitude: (value: number) => void;
-    rotationSpeed: number;
-    setRotationSpeed: (value: number) => void;
-    setConfig: (config: string) => void;
-}
-
-const ControlPanel: React.FC<ControlPanelProps> = (props) => {
+const ControlPanel: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { allConfigs } = useContext(ConfigContext);
+    const { config, allConfigs, setConfig, setConfigByName } = useContext(ConfigContext);
 
     const buttonStyle = {
         background: 'none',
@@ -60,29 +44,29 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
                             <button
                                 key={configName}
                                 style={buttonStyle}
-                                onClick={() => props.setConfig(configName)}
+                                onClick={() => setConfigByName(configName)}
                             >
                                 {configName}
                             </button>
                         ))}
                     </div>
                     <div>
-                        Vertices: <input type="number" value={props.vertices} onChange={(e) => props.setVertices(Number(e.target.value))} />
+                        Vertices: <input type="number" value={config.vertices} onChange={(e) => setConfig({ ...config, vertices: Number(e.target.value) })} />
                     </div>
                     <div>
-                        Speed: <input type="number" step="0.1" value={props.speed} onChange={(e) => props.setSpeed(Number(e.target.value))} />
+                        Speed: <input type="number" step="0.1" value={config.speed} onChange={(e) => setConfig({ ...config, speed: Number(e.target.value) })} />
                     </div>
                     <div>
-                        Color: <input type="color" value={props.color} onChange={(e) => props.setColor(e.target.value)} />
+                        Color: <input type="color" value={config.color} onChange={(e) => setConfig({ ...config, color: e.target.value })} />
                     </div>
                     <div>
-                        Noise Frequency: <input type="number" step="0.1" value={props.noiseFrequency} onChange={(e) => props.setNoiseFrequency(Number(e.target.value))} />
+                        Noise Frequency: <input type="number" step="0.1" value={config.noiseFrequency} onChange={(e) => setConfig({ ...config, noiseFrequency: Number(e.target.value) })} />
                     </div>
                     <div>
-                        Noise Amplitude: <input type="number" step="0.01" value={props.noiseAmplitude} onChange={(e) => props.setNoiseAmplitude(Number(e.target.value))} />
+                        Noise Amplitude: <input type="number" step="0.01" value={config.noiseAmplitude} onChange={(e) => setConfig({ ...config, noiseAmplitude: Number(e.target.value) })} />
                     </div>
                     <div>
-                        Rotation Speed: <input type="number" step="0.1" value={props.rotationSpeed} onChange={(e) => props.setRotationSpeed(Number(e.target.value))} />
+                        Rotation Speed: <input type="number" step="0.1" value={config.rotationSpeed} onChange={(e) => setConfig({ ...config, rotationSpeed: Number(e.target.value) })} />
                     </div>
                 </div>
             )}
