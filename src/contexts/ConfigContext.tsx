@@ -1,8 +1,8 @@
 import React, { createContext, useState, useCallback } from 'react';
 import sphereConfigs from '../configs/sphereConfigs';
 
-// Define the Config type if not already defined
-type Config = {
+// Define the Config type and export it
+export type Config = {
     vertices: number;
     speed: number;
     color: string;

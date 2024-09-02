@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useCallback } from 'react';
-import { ConfigContext } from '../contexts/ConfigContext';
+import { ConfigContext, Config } from '../contexts/ConfigContext';
 
 const ControlPanel = React.memo(() => {
     const [isOpen, setIsOpen] = useState(true);
