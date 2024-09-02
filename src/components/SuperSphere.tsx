@@ -38,9 +38,10 @@ declare global {
 interface SphereProps {
     sphereSegments: number;
     seed: number;
+    speed: number;
 }
 
-function Sphere({ sphereSegments, seed }: SphereProps) {
+function Sphere({ sphereSegments, seed, speed }: SphereProps) {
     const meshRef = useRef<THREE.Mesh>(null!)
     const materialRef = useRef<CustomShaderMaterial>(null!)
     const [mouseDentro, setMouseDentro] = useState(false)
@@ -51,7 +52,7 @@ function Sphere({ sphereSegments, seed }: SphereProps) {
             materialRef.current.uniforms.MouseDentro.value = mouseDentro
             materialRef.current.uniforms.seed.value = seed
         }
-        meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01
+        meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01 * speed
     })
 
     return (
@@ -73,6 +74,7 @@ interface SuperSphereProps {
     className?: string;
     style?: React.CSSProperties;
     vertices?: number; // New prop for number of vertices
+    speed?: number; // New prop for rotation speed
 }
 
 export default function SuperSphere({
@@ -80,7 +82,8 @@ export default function SuperSphere({
     height = '100%',
     className,
     style,
-    vertices = 32 // Default value if not provided
+    vertices = 32, // Default value if not provided
+    speed = 1 // Default speed if not provided
 }: SuperSphereProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState({ width: 0, height: 0 })
@@ -113,6 +116,7 @@ export default function SuperSphere({
                 <Sphere
                     sphereSegments={vertices}
                     seed={Math.random() * 100}
+                    speed={speed}
                 />
             </Canvas>
         </div>
