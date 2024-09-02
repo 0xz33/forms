@@ -15,7 +15,7 @@ export default function Home() {
       {/* <SuperSphere width="320px" height="320px" vertices={18} speed={.88} color="#B2ACD2" /> */}
 
       {/* small */}
-      {/* <SuperSphere width="88px" height="88px" vertices={8} speed={.11} color="#B2ACD2" /> */}
+      {/* <SuperSphere width="88px" height="88px" vertices={8} speed={.55} color="#B2ACD2" /> */}
 
       {/* x small */}
       {/* <SuperSphere width="56px" height="56px" vertices={6} speed={1.11} color="#B2ACD2" /> */}
@@ -24,4 +24,4 @@ export default function Home() {
       {/* <SuperSphere width="24px" height="24px" vertices={4} speed={.88} color="#B2ACD2" /> */}
     </div>
   )
-}
+} 
