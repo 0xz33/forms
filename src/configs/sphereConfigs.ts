@@ -8,10 +8,10 @@ const sphereConfigs = {
     rotationSpeed: 0.66,
   },
   slow: {
-    vertices: 33,
-    speed: 0.5,
+    vertices: 28,
+    speed: 0.44,
     color: "#B2ACD2",
-    noiseFrequency: 1.11,
+    noiseFrequency: 0.55,
     noiseAmplitude: 1.11,
     rotationSpeed: 0.2,
   },
