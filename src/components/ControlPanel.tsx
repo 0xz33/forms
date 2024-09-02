@@ -1,5 +1,6 @@
 import React, { useState, useContext, useRef, useCallback } from 'react';
 import { ConfigContext } from '../contexts/ConfigContext';
+import { Config } from '../types/Config'; // Add this import
 
 const ControlPanel = React.memo(() => {
     const [isOpen, setIsOpen] = useState(true);
@@ -10,14 +11,13 @@ const ControlPanel = React.memo(() => {
         background: 'none',
         border: '.5px solid white',
         color: 'white',
-        borderColor: '#ccff0077',
+        borderColor: '#ffffff77',
         cursor: 'pointer',
         padding: '8px 16px',
         fontSize: '12px',
-        textTransform: 'uppercase',
         width: '100%',
         marginBottom: '8px',
-    };
+    } as const; // Add 'as const' to fix the type issues
 
     const handleInputChange = useCallback((key: keyof Config, value: string) => {
         const numValue = Number(value);
@@ -46,7 +46,7 @@ const ControlPanel = React.memo(() => {
             <button onClick={() => setIsOpen(!isOpen)} style={{
                 ...commonStyle,
                 border: 'none',
-                textAlign: 'left' as const,
+                textAlign: 'left',
                 padding: '0',
             }}>
                 {isOpen ? '▲ Hide Controls' : '▼ Show Controls'}
@@ -150,7 +150,12 @@ const ControlPanel = React.memo(() => {
     );
 });
 
-const ControlItem = React.memo(({ label, children }) => (
+interface ControlItemProps {
+    label: string;
+    children: React.ReactNode;
+}
+
+const ControlItem: React.FC<ControlItemProps> = React.memo(({ label, children }) => (
     <div style={{ marginBottom: '8px' }}>
         <label style={{ display: 'block', marginBottom: '4px' }}>{label}</label>
         {children}
