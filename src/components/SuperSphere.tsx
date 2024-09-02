@@ -3,8 +3,32 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, extend, Object3DNode } from '@react-three/fiber'
 import * as THREE from 'three'
-import vertexShader from '../app/form0'
 import { PerspectiveCamera } from '@react-three/drei'
+
+const vertexShader = `
+uniform float time;
+uniform float seed;
+uniform bool MouseDentro;
+
+varying vec2 vUv;
+
+void main() {
+    vUv = uv;
+    
+    vec3 pos = position;
+    
+    float noiseFreq = 1.5;
+    float noiseAmp = 0.25;
+    vec3 noisePos = vec3(pos.x * noiseFreq + time, pos.y, pos.z);
+    pos += normal * (sin(time * 0.5) + 1.0) * 0.1;
+    
+    if (MouseDentro) {
+        pos += normal * (sin(time * 0.5) + 1.0) * 0.1;
+    }
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+}
+`
 
 class CustomShaderMaterial extends THREE.ShaderMaterial {
     constructor(color: THREE.Color) {
@@ -79,7 +103,7 @@ interface SuperSphereProps {
     style?: React.CSSProperties;
     vertices?: number;
     speed?: number;
-    color?: string; // New prop for color
+    color?: string;
 }
 
 export default function SuperSphere({
@@ -89,7 +113,7 @@ export default function SuperSphere({
     style,
     vertices = 32,
     speed = 1,
-    color = '#9E96C6' // Default color if not provided
+    color = '#9E96C6'
 }: SuperSphereProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState({ width: 0, height: 0 })
