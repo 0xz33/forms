@@ -12,7 +12,7 @@ export default function Home() {
       <SuperSphere
         width="100%"
         height="100vh"
-        vertices={64}
+        vertices={11}
         speed={1}
         color="#B2ACD2"
         noiseFrequency={.88}
