@@ -71,7 +71,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Canvas
-        camera={{ position: [0, 0, 3], fov: 50 }}
+        camera={{ position: [0, 0, 10], fov: 50 }} // edit Z position to increase / decrease zoom
         style={{ width: '100%', height: '100%' }}
       >
         <Sphere
