@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useCallback } from 'react';
-import { ConfigContext, Config } from '../contexts/ConfigContext';
+import { ConfigContext } from '../contexts/ConfigContext';
 
 const ControlPanel = React.memo(() => {
     const [isOpen, setIsOpen] = useState(true);
@@ -10,12 +10,12 @@ const ControlPanel = React.memo(() => {
         background: 'none',
         border: '.5px solid white',
         color: 'white',
+        borderColor: '#ccff0077',
         cursor: 'pointer',
         padding: '8px 16px',
         fontSize: '12px',
         textTransform: 'uppercase',
         width: '100%',
-        boxSizing: 'border-box' as const,
         marginBottom: '8px',
     };
 
