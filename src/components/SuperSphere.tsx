@@ -7,17 +7,19 @@ import vertexShader from '../app/form0'
 import { PerspectiveCamera } from '@react-three/drei'
 
 class CustomShaderMaterial extends THREE.ShaderMaterial {
-    constructor() {
+    constructor(color: THREE.Color) {
         super({
             uniforms: {
                 time: { value: 0 },
                 MouseDentro: { value: false },
-                seed: { value: 0 }
+                seed: { value: 0 },
+                color: { value: color }
             },
             vertexShader,
             fragmentShader: `
+        uniform vec3 color;
         void main() {
-          gl_FragColor = vec4(0.62, 0.59, 0.78, 1.0);
+          gl_FragColor = vec4(color, 1.0);
         }
       `,
             wireframe: true
@@ -39,9 +41,10 @@ interface SphereProps {
     sphereSegments: number;
     seed: number;
     speed: number;
+    color: THREE.Color;
 }
 
-function Sphere({ sphereSegments, seed, speed }: SphereProps) {
+function Sphere({ sphereSegments, seed, speed, color }: SphereProps) {
     const meshRef = useRef<THREE.Mesh>(null!)
     const materialRef = useRef<CustomShaderMaterial>(null!)
     const [mouseDentro, setMouseDentro] = useState(false)
@@ -51,6 +54,7 @@ function Sphere({ sphereSegments, seed, speed }: SphereProps) {
             materialRef.current.uniforms.time.value = state.clock.getElapsedTime()
             materialRef.current.uniforms.MouseDentro.value = mouseDentro
             materialRef.current.uniforms.seed.value = seed
+            materialRef.current.uniforms.color.value = color
         }
         meshRef.current.rotation.x = meshRef.current.rotation.y += 0.01 * speed
     })
@@ -62,7 +66,7 @@ function Sphere({ sphereSegments, seed, speed }: SphereProps) {
         >
             <mesh ref={meshRef}>
                 <sphereGeometry args={[1, sphereSegments, sphereSegments]} />
-                <customShaderMaterial ref={materialRef} />
+                <customShaderMaterial ref={materialRef} args={[color]} />
             </mesh>
         </group>
     )
@@ -73,8 +77,9 @@ interface SuperSphereProps {
     height?: string | number;
     className?: string;
     style?: React.CSSProperties;
-    vertices?: number; // New prop for number of vertices
-    speed?: number; // New prop for rotation speed
+    vertices?: number;
+    speed?: number;
+    color?: string; // New prop for color
 }
 
 export default function SuperSphere({
@@ -82,8 +87,9 @@ export default function SuperSphere({
     height = '100%',
     className,
     style,
-    vertices = 32, // Default value if not provided
-    speed = 1 // Default speed if not provided
+    vertices = 32,
+    speed = 1,
+    color = '#9E96C6' // Default color if not provided
 }: SuperSphereProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState({ width: 0, height: 0 })
@@ -104,6 +110,8 @@ export default function SuperSphere({
         return () => window.removeEventListener('resize', updateSize)
     }, [])
 
+    const threeColor = new THREE.Color(color)
+
     return (
         <div ref={containerRef} style={{ width, height, ...style }} className={className}>
             <Canvas style={{ width: '100%', height: '100%' }}>
@@ -117,6 +125,7 @@ export default function SuperSphere({
                     sphereSegments={vertices}
                     seed={Math.random() * 100}
                     speed={speed}
+                    color={threeColor}
                 />
             </Canvas>
         </div>
