@@ -10,8 +10,8 @@ export default function Home() {
   return (
     <div className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <SuperSphere
-        width="320px"
-        height="320px"
+        width="100%"
+        height="100%"
         {...config}
       />
     </div>

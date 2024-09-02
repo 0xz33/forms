@@ -17,11 +17,11 @@ const sphereConfigs = {
   },
   energetic: {
     vertices: 33,
-    speed: 1.88,
+    speed: 0.88,
     color: "#B2ACD2",
-    noiseFrequency: 1.44,
+    noiseFrequency: 1.22,
     noiseAmplitude: 0.99,
-    rotationSpeed: 0.66,
+    rotationSpeed: 0.33,
   },
   "20rem": {
     vertices: 14,
