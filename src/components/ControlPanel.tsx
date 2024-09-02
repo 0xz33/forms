@@ -108,7 +108,7 @@ const ControlPanel = React.memo(() => {
                             value={config.noiseFrequency}
                             onChange={(e) => handleInputChange('noiseFrequency', e.target.value)}
                             style={commonStyle}
-                            step="0.01"
+                            step="0.11"
                         />
                     </ControlItem>
 
@@ -118,7 +118,7 @@ const ControlPanel = React.memo(() => {
                             value={config.noiseAmplitude}
                             onChange={(e) => handleInputChange('noiseAmplitude', e.target.value)}
                             style={commonStyle}
-                            step="0.01"
+                            step="0.11"
                         />
                     </ControlItem>
 
@@ -128,7 +128,7 @@ const ControlPanel = React.memo(() => {
                             value={config.rotationSpeed}
                             onChange={(e) => handleInputChange('rotationSpeed', e.target.value)}
                             style={commonStyle}
-                            step="0.01"
+                            step="0.11"
                         />
                     </ControlItem>
 
