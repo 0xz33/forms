@@ -5,4 +5,5 @@ export interface Config {
   noiseFrequency: number;
   noiseAmplitude: number;
   rotationSpeed: number;
+  texture: string;
 }

@@ -13,7 +13,10 @@ type ConfigContextType = {
 export const ConfigContext = createContext<ConfigContextType>({} as ConfigContextType);
 
 export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [config, setConfigState] = useState<Config>(sphereConfigs.default);
+    const [config, setConfigState] = useState<Config>({
+        ...sphereConfigs.default,
+        texture: 'default'
+    });
 
     const setConfig = useCallback((newConfig: Partial<Config>) => {
         setConfigState(prevConfig => ({ ...prevConfig, ...newConfig }));
@@ -21,7 +24,10 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const setConfigByName = useCallback((configName: string) => {
         if (configName in sphereConfigs) {
-            setConfigState(sphereConfigs[configName as keyof typeof sphereConfigs]);
+            setConfigState(prevConfig => ({
+                ...sphereConfigs[configName as keyof typeof sphereConfigs],
+                texture: prevConfig.texture // Preserve the current texture
+            }));
         }
     }, []);
 

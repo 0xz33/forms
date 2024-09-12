@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { ConfigContext } from '../contexts/ConfigContext';
 
 const TextureControlPanel = React.memo(() => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const { config, setConfig } = useContext(ConfigContext);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -58,7 +61,11 @@ const TextureControlPanel = React.memo(() => {
             : { top: '50px', left: '10px' }),
     };
 
-    const textureButtons = ['bronze', 'silver', 'gold', 'onyx', 'diamond', 'mythic', 'ethereal'];
+    const handleTextureChange = (texture: string) => {
+        setConfig({ texture });
+    };
+
+    const textureButtons = ['default', 'gold', 'silver', 'bronze', 'onyx', 'diamond', 'mythic', 'ethereal'];
 
     return (
         <>
@@ -86,7 +93,14 @@ const TextureControlPanel = React.memo(() => {
 
                         <h4 style={{ marginTop: '16px', marginBottom: '8px' }}>Texture</h4>
                         {textureButtons.map((texture) => (
-                            <button key={texture} style={commonStyle}>
+                            <button
+                                key={texture}
+                                style={{
+                                    ...commonStyle,
+                                    backgroundColor: config.texture === texture ? 'rgba(255,255,255,0.2)' : 'transparent'
+                                }}
+                                onClick={() => handleTextureChange(texture)}
+                            >
                                 {texture}
                             </button>
                         ))}
