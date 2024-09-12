@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Canvas, useFrame, extend, Object3DNode } from '@react-three/fiber'
 import * as THREE from 'three'
 import { PerspectiveCamera } from '@react-three/drei'
@@ -8,7 +8,6 @@ import { PerspectiveCamera } from '@react-three/drei'
 const vertexShader = `
   uniform float time;
   uniform float seed;
-  uniform bool MouseDentro;
   uniform float noiseFrequency;
   uniform float noiseAmplitude;
 
@@ -102,10 +101,6 @@ const vertexShader = `
     float noiseValue = cnoise(noisePos);
     pos += normal * noiseValue * noiseAmplitude;
     
-    if (MouseDentro) {
-      pos += normal * (sin(time * 0.5) + 1.0) * 0.1;
-    }
-
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 `
@@ -146,7 +141,6 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
         super({
             uniforms: {
                 time: { value: 0 },
-                MouseDentro: { value: false },
                 seed: { value: 0 },
                 color: { value: color },
                 noiseFrequency: { value: 1.5 },
@@ -196,12 +190,10 @@ function addBarycentricCoordinates(geometry: THREE.BufferGeometry) {
 function Sphere({ sphereSegments, seed, speed, color, noiseFrequency, noiseAmplitude, rotationSpeed }: SphereProps) {
     const meshRef = useRef<THREE.Mesh>(null!)
     const materialRef = useRef<CustomShaderMaterial>(null!)
-    const [mouseDentro, setMouseDentro] = useState(false)
 
     useFrame((state) => {
         if (materialRef.current) {
             materialRef.current.uniforms.time.value = state.clock.getElapsedTime() * speed
-            materialRef.current.uniforms.MouseDentro.value = mouseDentro
             materialRef.current.uniforms.seed.value = seed
             materialRef.current.uniforms.color.value = new THREE.Color(color)
             materialRef.current.uniforms.noiseFrequency.value = noiseFrequency
@@ -221,15 +213,10 @@ function Sphere({ sphereSegments, seed, speed, color, noiseFrequency, noiseAmpli
     }, [sphereSegments]);
 
     return (
-        <group
-            onPointerEnter={() => setMouseDentro(true)}
-            onPointerLeave={() => setMouseDentro(false)}
-        >
-            <mesh ref={meshRef}>
-                <icosahedronGeometry args={[1, sphereSegments]} />
-                <customShaderMaterial ref={materialRef} args={[color]} />
-            </mesh>
-        </group>
+        <mesh ref={meshRef}>
+            <icosahedronGeometry args={[1, sphereSegments]} />
+            <customShaderMaterial ref={materialRef} args={[color]} />
+        </mesh>
     )
 }
 
@@ -259,45 +246,38 @@ export default function SuperSphere({
     rotationSpeed = 1
 }: SuperSphereProps) {
     const containerRef = useRef<HTMLDivElement>(null)
-    const [size, setSize] = useState({ width: 0, height: 0 })
-
-    useEffect(() => {
-        const updateSize = () => {
-            if (containerRef.current) {
-                setSize({
-                    width: containerRef.current.clientWidth,
-                    height: containerRef.current.clientHeight
-                })
-            }
-        }
-
-        window.addEventListener('resize', updateSize)
-        updateSize()
-
-        return () => window.removeEventListener('resize', updateSize)
-    }, [])
-
     const threeColor = new THREE.Color(color)
 
     return (
         <div ref={containerRef} style={{ width, height, ...style }} className={className}>
-            <Canvas style={{ width: '100%', height: '100%' }}>
-                <PerspectiveCamera
-                    makeDefault
-                    position={[0, 0, 5]}
-                    fov={50}
-                    aspect={size.width / size.height}
-                />
-                <Sphere
-                    sphereSegments={vertices}
-                    seed={Math.random() * 100}
-                    speed={speed}
-                    color={threeColor}
-                    noiseFrequency={noiseFrequency}
-                    noiseAmplitude={noiseAmplitude}
-                    rotationSpeed={rotationSpeed}
-                />
-            </Canvas>
+            <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '100%',
+                height: '100%',
+                overflow: 'hidden',
+                boxShadow: '0 0 10px rgba(0,0,0,0.5)',
+            }}>
+                <Canvas style={{ width: '100%', height: '100%' }}>
+                    <PerspectiveCamera
+                        makeDefault
+                        position={[0, 0, 5]}
+                        fov={50}
+                        aspect={typeof width === 'number' && typeof height === 'number' ? width / height : undefined}
+                    />
+                    <Sphere
+                        sphereSegments={vertices}
+                        seed={Math.random() * 100}
+                        speed={speed}
+                        color={threeColor}
+                        noiseFrequency={noiseFrequency}
+                        noiseAmplitude={noiseAmplitude}
+                        rotationSpeed={rotationSpeed}
+                    />
+                </Canvas>
+            </div>
         </div>
     )
 }
