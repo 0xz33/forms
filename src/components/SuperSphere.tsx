@@ -142,6 +142,7 @@ const goldFragmentShader = `
   uniform vec3 color;
   uniform float noiseFrequency;
   uniform float noiseAmplitude;
+  uniform vec2 resolution;
   varying vec3 vNormal;
   varying vec2 vUv;
 
@@ -210,6 +211,23 @@ const goldFragmentShader = `
                                   dot(p2,x2), dot(p3,x3) ) );
   }
 
+  void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 p = 6.0 * ((fragCoord.xy - 0.5 * resolution.xy) / resolution.y) - 0.5;
+    vec2 i = p;
+    float c = 0.0;
+    float r = length(p + vec2(sin(time), sin(time * 0.300 + 5.0)) * 0.5);
+    float d = length(p);
+    float rot = d + time + p.x * 0.700;
+    for (float n = 0.0; n < 4.0; n++) {
+      p *= mat2(cos(rot - sin(time / 5.0)), sin(rot), -sin(cos(rot) - time), cos(rot)) * -0.2;
+      float t = r - time / (n + 3.0);
+      i -= p + vec2(cos(t - i.x - r) + sin(t + i.y), sin(t - i.y) + cos(t + i.x) + r);
+      c += 1.2 / length(vec2((sin(i.x + t) / 0.15), (cos(i.y + t) / 0.15)));
+    }
+    c /= 6.0;
+    fragColor = vec4(vec3(c) * vec3(3.0, 2.0, 1.1) - 0.35, 0.1);
+  }
+
   void main() {
     // Base gold colors
     vec3 brightGold = vec3(1.0, 0.843, 0.0);
@@ -240,7 +258,14 @@ const goldFragmentShader = `
     vec3 specular = vec3(1.0, 0.9, 0.6) * spec * 0.5;
     vec3 fresnelEffect = vec3(1.0, 0.9, 0.7) * fresnel * 0.3;
 
-    vec3 finalColor = ambient + diffuse + specular + fresnelEffect;
+    vec3 baseColor = ambient + diffuse + specular + fresnelEffect;
+    
+    // Apply the new effect
+    vec4 newEffect;
+    mainImage(newEffect, gl_FragCoord.xy);
+    
+    // Blend the base gold color with the new effect
+    vec3 finalColor = mix(baseColor, newEffect.rgb, 0.5);
     
     gl_FragColor = vec4(finalColor, 1.0);
   }
@@ -276,6 +301,7 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
                 noiseFrequency: { value: 1.5 },
                 noiseAmplitude: { value: 0.25 },
                 PI: { value: Math.PI },
+                resolution: { value: new THREE.Vector2() },
                 ...config.uniforms
             },
             vertexShader,
@@ -330,6 +356,7 @@ function Sphere({ sphereSegments, seed, speed, color, noiseFrequency, noiseAmpli
             materialRef.current.uniforms.color.value = new THREE.Color(color)
             materialRef.current.uniforms.noiseFrequency.value = noiseFrequency
             materialRef.current.uniforms.noiseAmplitude.value = noiseAmplitude
+            materialRef.current.uniforms.resolution.value.set(state.size.width, state.size.height)
         }
         // Apply rotation
         meshRef.current.rotation.x += rotationSpeed * 0.01
