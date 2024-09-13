@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useCallback, useEffect } from 'react';
 import { ConfigContext } from '../contexts/ConfigContext';
-import { Config } from '../types/Config'; // Add this import
+import { Config } from '../types/Config';
 
 const ControlPanel = React.memo(() => {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,29 +12,28 @@ const ControlPanel = React.memo(() => {
         const checkMobile = () => {
             const mobile = window.innerWidth <= 768;
             setIsMobile(mobile);
-            setIsOpen(!mobile); // Open by default on desktop, closed on mobile
+            setIsOpen(!mobile);
         };
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    const commonStyle = {
-        background: 'none',
-        border: '.5px solid white',
-        color: 'white',
-        borderColor: '#ffffff77',
-        cursor: 'pointer',
-        padding: '8px 16px',
-        fontSize: '12px',
-        width: '100%',
-        marginBottom: '8px',
-    } as const; // Add 'as const' to fix the type issues
+    const formatNumber = (num: number | string) => {
+        if (typeof num === 'number') {
+            return num === 0 ? '' : num.toString();
+        }
+        return num === '0' ? '' : num;
+    };
 
     const handleInputChange = useCallback((key: keyof Config, value: string) => {
-        const numValue = Number(value);
-        if (!isNaN(numValue)) {
-            setConfig({ [key]: numValue });
+        if (value === '') {
+            setConfig({ [key]: 0 });
+        } else {
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                setConfig({ [key]: numValue });
+            }
         }
     }, [setConfig]);
 
@@ -49,7 +48,6 @@ const ControlPanel = React.memo(() => {
         cursor: 'pointer',
         padding: '8px 16px',
         fontSize: '12px',
-        width: '100%',
         borderRadius: '5px',
         position: 'fixed' as const,
         zIndex: 1001,
@@ -73,16 +71,16 @@ const ControlPanel = React.memo(() => {
             : { top: '50px', right: '10px' }),
     };
 
-    const hideButtonStyle = {
-        background: 'white',
-        color: 'black',
-        border: 'none',
+    const commonStyle = {
+        background: 'none',
+        border: '.5px solid white',
+        color: 'white',
+        borderColor: '#ffffff77',
         cursor: 'pointer',
         padding: '8px 16px',
         fontSize: '12px',
         width: '100%',
-        marginTop: '16px',
-        borderRadius: '5px',
+        marginBottom: '8px',
     };
 
     return (
@@ -96,7 +94,7 @@ const ControlPanel = React.memo(() => {
                         <ControlItem label="Vertices:">
                             <input
                                 type="number"
-                                value={config.vertices}
+                                value={formatNumber(config.vertices)}
                                 onChange={(e) => handleInputChange('vertices', e.target.value)}
                                 style={commonStyle}
                             />
@@ -105,7 +103,7 @@ const ControlPanel = React.memo(() => {
                         <ControlItem label="Speed:">
                             <input
                                 type="number"
-                                value={config.speed}
+                                value={formatNumber(config.speed)}
                                 onChange={(e) => handleInputChange('speed', e.target.value)}
                                 style={commonStyle}
                                 step="0.01"
@@ -145,30 +143,30 @@ const ControlPanel = React.memo(() => {
                         <ControlItem label="Noise Frequency:">
                             <input
                                 type="number"
-                                value={config.noiseFrequency}
+                                value={formatNumber(config.noiseFrequency)}
                                 onChange={(e) => handleInputChange('noiseFrequency', e.target.value)}
                                 style={commonStyle}
-                                step="0.11"
+                                step="0.01"
                             />
                         </ControlItem>
 
                         <ControlItem label="Noise Amplitude:">
                             <input
                                 type="number"
-                                value={config.noiseAmplitude}
+                                value={formatNumber(config.noiseAmplitude)}
                                 onChange={(e) => handleInputChange('noiseAmplitude', e.target.value)}
                                 style={commonStyle}
-                                step="0.11"
+                                step="0.01"
                             />
                         </ControlItem>
 
                         <ControlItem label="Rotation Speed:">
                             <input
                                 type="number"
-                                value={config.rotationSpeed}
+                                value={formatNumber(config.rotationSpeed)}
                                 onChange={(e) => handleInputChange('rotationSpeed', e.target.value)}
                                 style={commonStyle}
-                                step="0.11"
+                                step="0.01"
                             />
                         </ControlItem>
 

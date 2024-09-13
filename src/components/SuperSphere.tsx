@@ -275,6 +275,7 @@ class CustomShaderMaterial extends THREE.ShaderMaterial {
                 color: { value: color },
                 noiseFrequency: { value: 1.5 },
                 noiseAmplitude: { value: 0.25 },
+                PI: { value: Math.PI },
                 ...config.uniforms
             },
             vertexShader,
